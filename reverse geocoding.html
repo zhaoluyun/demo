@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Reverse Geocoding</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <div id="tip">
+    	<p id='address'><p>
+      <style>
+        html, body {
+          margin: 2%;
+          padding: 0;
+        }
+      </style>
+    </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEY&callback=regeocode"
+        async defer></script> <!--Get an API Key: https://developers.google.com/maps/documentation/javascript/get-api-key-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="csvtoArray.js"></script>
+    <script src='data.csv'></script>
+    <script>
+
+
+function regeocode() {
+  var data= CSVToArray(strData, strDelimiter);
+  console.log(data)
+
+  for (var i=0; i<data.length; i++) {
+
+  function geocodeLatLng() {
+    var latlng = {lat: parseFloat(data[i][0]), lng: parseFloat(data[i][1])};
+    console.log(latlng);
+    var geocoder = new google.maps.Geocoder;
+    geocoder.geocode({'location': latlng}, function(results, status) {
+      if (status === google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          $('#address').append("Coordinate: "+latlng.lat+", "+latlng.lng+" Address: "+results[0].formatted_address+'</br>');
+          console.log(results[0].types)
+        }
+        else {
+          window.alert('No results found');
+        }
+      }
+      else {
+        window.alert('Geocoder failed due to: ' + status);
+      }
+    });
+  }
+  geocodeLatLng()
+  }
+}
+    </script>
+
+  </body>
+</html>

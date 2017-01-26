@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>GPS Coordinates to POIs</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <div id="tip">
+    	<p id='address'><p>
+      <style>
+        html, body {
+          margin: 2%;
+          padding: 0;
+        }
+      </style>
+    </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEY&callback=regeocode"
+        async defer></script> <!--Get an API Key: https://developers.google.com/maps/documentation/javascript/get-api-key-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="csvtoArray.js"></script>
+    <script src='data.csv'></script>
+    <script>
+
+
+function regeocode() {
+  var data= CSVToArray(strData, strDelimiter);
+
+  for (var i=0; i<data.length; i++) {
+
+  function geocodeLatLng_POI() {
+    var latlng = {lat: parseFloat(data[i][0]), lng: parseFloat(data[i][1])};
+    console.log(latlng);
+    var map = new google.maps.Map({
+          center: latlng,
+          zoom: 15
+        });
+    var service = new google.maps.places.PlacesService(map);
+    service.nearbySearch({
+      location: latlng,
+      radius: 50 //meters
+      // type: ['store']
+    }, callback);
+
+    function callback(results, status) {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        if (results[1]) {
+          $('#address').append("POI Name: "+results[1].name+"; POI Type: "+results[1].types+'</br>'); // first results (results[0]) are usually street_address, so I use second result here
+        }
+      }
+    }
+  }
+  geocodeLatLng_POI()
+}
+}
+
+
+    </script>
+
+  </body>
+</html>
